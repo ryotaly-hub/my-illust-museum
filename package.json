@@ -1,0 +1,17 @@
+{
+  "name": "my-illust-museum",
+  "version": "1.0.0",
+  "description": "イラストが発表したくてウズウズしてる人の「自己満専用美術館」です。",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env index.js",
+    "test": "bash test.sh"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
