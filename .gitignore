@@ -5,3 +5,7 @@ docs/*
 !docs/.gitkeep
 assets/*
 !assets/.gitkeep
+# 管理画面のパスワード（ハッシュ）
+data/admin.json
+# 登録した作品データ（個人のデータなのでリポジトリには上げない。引き継ぎは登録画面の「登録情報の書出し」で）
+data/works.json

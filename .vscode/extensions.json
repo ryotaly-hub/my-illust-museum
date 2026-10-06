@@ -3,6 +3,7 @@
     "anthropic.claude-code",
     "github.vscode-github-actions",
     "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "ms-python.vscode-python-envs"
   ]
 }

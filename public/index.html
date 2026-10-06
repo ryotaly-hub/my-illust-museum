@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Michan's Museum</title>
+  <link rel="stylesheet" href="/style.css">
+  <script>
+    // オープニングはタブを開いている間に 1 回だけ。見たことがあれば、描画の前に隠しておく（一瞬見えるのを防ぐ）
+    try {
+      if (sessionStorage.getItem('museum-opening-seen')) document.documentElement.classList.add('opening-seen');
+    } catch (e) {
+      // 使えない環境では毎回表示する
+    }
+  </script>
+</head>
+<body>
+  <!-- 3D の廊下。#world に壁・床・天井・作品を並べ、#world 全体を動かしてカメラ移動を表現する -->
+  <div id="scene">
+    <div id="world"></div>
+    <div id="fog"></div>
+  </div>
+
+  <header class="hud hud-top">
+    <div class="brand">
+      <span class="brand-name">Michan's Museum</span>
+      <span class="brand-sub">みっちゃんの美術館</span>
+    </div>
+    <div class="counter" id="counter"></div>
+  </header>
+
+  <button class="nav nav-prev" id="btn-future" type="button" aria-label="新しい作品の方へ">
+    <span class="nav-arrow">←</span><span class="nav-label">未来へ</span>
+  </button>
+  <button class="nav nav-next" id="btn-past" type="button" aria-label="過去の作品の方へ">
+    <span class="nav-arrow">→</span><span class="nav-label">過去へ</span>
+  </button>
+
+  <!-- 正面表示のときの作品情報 -->
+  <section class="caption" id="caption" aria-live="polite">
+    <p class="caption-meta"><span id="cap-no"></span><span id="cap-date"></span></p>
+    <h1 class="caption-title" id="cap-title"></h1>
+    <p class="caption-desc" id="cap-desc"></p>
+    <button class="caption-back" id="btn-back" type="button">廊下に戻る</button>
+  </section>
+
+  <!-- 拡大表示のときはタイトルだけ出す -->
+  <p class="zoom-title" id="zoom-title" aria-live="polite"></p>
+
+  <!-- 廊下を歩いているときの案内 -->
+  <section class="walk-label" id="walk-label">
+    <p class="walk-title" id="walk-title"></p>
+    <p class="walk-hint">絵をクリックすると正面から鑑賞できます</p>
+  </section>
+
+  <p class="empty" id="empty" hidden>まだ作品が飾られていません。<br>data/works.json に作品を追加してください。</p>
+
+  <!-- 作品の登録（自分専用）。右下の歯車から、パスワードを入れて入る -->
+  <button class="gear" id="btn-admin" type="button" aria-label="設定（作品の登録）">
+    <img src="/icons/gear.webp" alt="">
+  </button>
+
+  <div class="admin" id="admin" hidden>
+    <form class="admin-login" id="admin-login" autocomplete="off">
+      <h2>設定</h2>
+      <p>パスワードを入力してください</p>
+      <input type="password" id="login-password" aria-label="パスワード" autocomplete="current-password" required>
+      <p class="admin-error" id="login-error" role="alert"></p>
+      <div class="admin-actions">
+        <button type="button" class="btn-ghost" data-close>キャンセル</button>
+        <button type="submit" class="btn">入る</button>
+      </div>
+    </form>
+
+    <section class="admin-panel" id="admin-panel" hidden aria-labelledby="admin-title">
+      <header class="admin-head">
+        <h2 id="admin-title">作品の登録</h2>
+        <button type="button" class="btn-ghost" data-close>閉じる</button>
+      </header>
+
+      <form class="work-form" id="work-form">
+        <label class="drop" id="drop">
+          <input type="file" id="work-file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+          <img id="drop-preview" alt="" hidden>
+          <span class="drop-hint" id="drop-hint">画像をここにドロップ<br>またはクリックして選択</span>
+        </label>
+        <div class="work-fields">
+          <p class="edit-banner" id="edit-banner" hidden></p>
+          <label>タイトル<input type="text" id="work-title" maxlength="100" required></label>
+          <label>説明<textarea id="work-desc" maxlength="2000" rows="4"></textarea></label>
+          <label>作成日時<input type="datetime-local" id="work-date" required></label>
+          <p class="work-info" id="work-info">額は画像の縦横比に合わせて付きます（正方形は横長）</p>
+          <p class="admin-error" id="work-error" role="alert"></p>
+          <div class="work-buttons">
+            <button type="submit" class="btn" id="work-submit">登録する</button>
+            <button type="button" class="btn-ghost" id="edit-cancel" hidden>編集をやめる</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="work-list-head">
+        <h3>登録作品 <span id="work-count"></span></h3>
+        <p>新しい順。左端の ⋮⋮ をドラッグすると並べ替えられます</p>
+      </div>
+      <p class="admin-error" id="list-error" role="alert"></p>
+      <div class="work-table-wrap">
+        <table class="work-table">
+          <thead>
+            <tr><th></th><th>画像</th><th>タイトル</th><th>作成日時</th><th class="col-frame">額</th><th></th></tr>
+          </thead>
+          <tbody id="work-rows"></tbody>
+        </table>
+      </div>
+
+      <section class="backup-box">
+        <h3>登録情報の引き継ぎ</h3>
+        <p>別の環境に移すときは、ここで書き出したファイルを、移した先の「登録情報の読込み」で読み込みます。画像も一緒に入ります（パスワードは含みません）。</p>
+        <div class="backup-buttons">
+          <button type="button" class="btn-ghost" id="btn-export">登録情報の書出し</button>
+          <button type="button" class="btn-ghost" id="btn-import">登録情報の読込み</button>
+          <input type="file" id="import-file" accept=".json,application/json" hidden>
+        </div>
+        <div class="import-choice" id="import-choice" hidden>
+          <p id="import-summary"></p>
+          <div class="backup-buttons">
+            <button type="button" class="btn" id="import-replace">すべて置き換える</button>
+            <button type="button" class="btn-ghost" id="import-merge">今の作品に追加する</button>
+            <button type="button" class="btn-ghost" id="import-cancel">やめる</button>
+          </div>
+        </div>
+        <p class="admin-error" id="backup-msg" role="status"></p>
+      </section>
+
+      <details class="password-box">
+        <summary>パスワードを変更する</summary>
+        <form id="password-form">
+          <label>今のパスワード<input type="password" id="pw-current" autocomplete="current-password" required></label>
+          <label>新しいパスワード（4文字以上）<input type="password" id="pw-next" autocomplete="new-password" minlength="4" required></label>
+          <label>新しいパスワード（確認）<input type="password" id="pw-confirm" autocomplete="new-password" minlength="4" required></label>
+          <p class="admin-error" id="pw-error" role="alert"></p>
+          <button type="submit" class="btn">変更する</button>
+        </form>
+      </details>
+    </section>
+  </div>
+
+  <!-- オープニング。最新の作品が奥から手前へ通り過ぎ、タイトルと「入館する」ボタンが現れる -->
+  <div class="opening" id="opening" aria-label="オープニング">
+    <div class="opening-stage" id="opening-stage"></div>
+    <div class="opening-title" id="opening-title">
+      <p class="opening-name">Michan's Museum</p>
+      <p class="opening-sub">みっちゃんの美術館</p>
+    </div>
+    <button type="button" class="opening-enter" id="opening-enter">入館する</button>
+    <p class="opening-skip" id="opening-skip">クリックでスキップ</p>
+  </div>
+
+  <script src="/opening.js"></script>
+  <script src="/app.js"></script>
+  <script src="/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "sample-06",
+    "title": "夜明けの屋上",
+    "description": "徹夜明けに見た空の色を忘れないうちに。",
+    "image": "/assets/works/sample-06.png",
+    "date": "2026-09-28"
+  },
+  {
+    "id": "sample-05",
+    "title": "雨宿りの猫",
+    "description": "軒下で目が合った猫。たぶん向こうもこちらを観察していた。",
+    "image": "/assets/works/sample-05.png",
+    "date": "2026-08-15"
+  },
+  {
+    "id": "sample-04",
+    "title": "夏の終わりの駅",
+    "description": "誰もいないホームと、少しだけ涼しい風。",
+    "image": "/assets/works/sample-04.png",
+    "date": "2026-07-02"
+  },
+  {
+    "id": "sample-03",
+    "title": "喫茶店の窓際",
+    "description": "クリームソーダの泡が消えるまでに描き終えたかった一枚。",
+    "image": "/assets/works/sample-03.png",
+    "date": "2026-05-20"
+  },
+  {
+    "id": "sample-02",
+    "title": "春の散歩道",
+    "description": "桜より、足元のたんぽぽの方が気になった日。",
+    "image": "/assets/works/sample-02.png",
+    "date": "2026-04-03"
+  },
+  {
+    "id": "sample-01",
+    "title": "はじめての一枚",
+    "description": "この美術館のいちばん奥に飾る、最初の作品。",
+    "image": "/assets/works/sample-01.png",
+    "date": "2026-01-10"
+  }
+]
