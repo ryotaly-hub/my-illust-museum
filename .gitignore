@@ -9,3 +9,5 @@ assets/*
 data/admin.json
 # 登録した作品データ（個人のデータなのでリポジトリには上げない。引き継ぎは登録画面の「登録情報の書出し」で）
 data/works.json
+# GitHub Pages 用に組み立てたファイル（npm run pages）
+.pages-build/

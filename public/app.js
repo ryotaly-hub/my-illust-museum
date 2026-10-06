@@ -113,7 +113,7 @@
         const img = new Image();
         img.onload = () => resolve(img);
         img.onerror = reject;
-        img.src = `/frames/${id}.webp`;
+        img.src = `frames/${id}.webp`;
       }));
     }
     return frameImages.get(id);
@@ -464,7 +464,9 @@
   async function init() {
     let works = [];
     try {
-      const [worksRes, framesRes] = await Promise.all([fetch('/api/works'), fetch('/frames/frames.json')]);
+      // 公開版（GitHub Pages）では作品一覧をファイルから読む（site-config.js）
+      const worksUrl = window.MUSEUM_STATIC ? 'data/works.json' : 'api/works';
+      const [worksRes, framesRes] = await Promise.all([fetch(worksUrl), fetch('frames/frames.json')]);
       works = (await worksRes.json()).works || [];
       frames = framesRes.ok ? await framesRes.json() : {};
     } catch (err) {

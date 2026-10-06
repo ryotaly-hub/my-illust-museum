@@ -5,7 +5,7 @@
 ## 構成
 
 - 種類: Express（Node.js）の Web アプリ／API
-- デプロイ先: なし
+- 公開先: GitHub Pages（見るだけの公開版）— https://ryotaly-hub.github.io/my-illust-museum/
 
 ## 使い方
 
@@ -37,6 +37,15 @@
 - クローンした直後は作品 0 件から始まる。前の環境の作品は「登録情報の読込み」で引き継ぐ。`data/works.sample.json` はテスト用のサンプル（画像なし）。
 - **別の環境への引き継ぎ**：登録画面の「登録情報の書出し」で、作品の情報と画像をまとめた 1 つのファイル（`my-illust-museum-日付.json`）がダウンロードされる。移した先で「登録情報の読込み」からそのファイルを選び、「すべて置き換える」か「今の作品に追加する」（同じ作品は飛ばす）を選ぶ。パスワードは含まれないので、移した先では初期パスワード `0000` で入る。読み込めるファイルは 500MB まで。
 - 変更したパスワードは `data/admin.json`（git 管理外）にハッシュで保存される。忘れたらこのファイルを消すと `0000` に戻る。
+
+## GitHub Pages での公開
+
+- 作品の登録・編集・並べ替えは手元（`npm start` → http://localhost:3001/）で行い、終わったら `npm run pages` を実行する。
+- 画面一式・作品データ・作品の画像が `gh-pages` ブランチに push され、1〜2 分で https://ryotaly-hub.github.io/my-illust-museum/ に反映される。
+- 公開版は見るだけ（GitHub Pages にはサーバーがないので、右下の歯車＝登録画面は出ない）。
+- 公開版の作品データと画像は誰でも取得できる（`gh-pages` ブランチにも入る）。公開したくない作品は、手元で削除してから公開し直す。
+- `gh-pages` ブランチは毎回作り直す（履歴を残さない）。
+- 公開に使う設定：GitHub のリポジトリ → Settings → Pages で、Source が「Deploy from a branch」・Branch が `gh-pages` / `(root)`。
 
 ## 資料の保存場所
 

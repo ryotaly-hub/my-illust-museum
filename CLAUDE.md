@@ -7,11 +7,12 @@
 イラストが発表したくてウズウズしてる人の「自己満専用美術館」です。
 
 - 種類: Express（Node.js）の Web アプリ／API
-- デプロイ先: なし
+- 公開先: GitHub Pages（見るだけの公開版。`npm run pages` で `gh-pages` ブランチに push）— https://ryotaly-hub.github.io/my-illust-museum/
 
 ## コマンド
 
 - **起動**: `npm start` → http://localhost:3001/
+- **GitHub Pages に公開**: `npm run pages`（= `node scripts/publish-pages.js`）。`--build-only [出力先]` で組み立てだけ
 - **テスト**: `npm test`（= `bash test.sh`）。サーバーを自動で起動し、curl でエンドポイントを叩いて期待値と比較する。`curl` と `jq` が必要。
   - **注意**: `test.sh` は最初にポート 3001 のプロセスを `kill -9` する。
   - 新しいエンドポイントを追加したら、`test.sh` に `assert_eq` を追加する。
@@ -25,6 +26,8 @@ routes/index.js       API（下記）
 data/works.json       作品データ（git 管理外。無ければ 0 件）。配列の順 = 表示順（先頭が最新）
 data/works.sample.json テスト用のサンプル作品（test.sh が一時フォルダにコピーして使う）
 data/admin.json       変更後のパスワードのハッシュ（git 管理外。無ければ初期パスワード 0000）
+scripts/publish-pages.js GitHub Pages 用に組み立てて gh-pages ブランチに push（作品データ・画像を同梱、admin.js は除く）
+public/site-config.js 公開版かどうか（MUSEUM_STATIC）。公開版では true に置き換わり、作品一覧を data/works.json から読み、登録画面を出さない
 public/               画面（index.html / style.css / app.js）。ビルドなし
 public/wallpaper.webp 廊下の壁紙（参考画像から模様の 1 周期 486×529 を切り出した継ぎ目なしタイル）
 public/opening.js     オープニング（最新 5 枚が奥から手前へ → タイトル → 入館ボタン）。タブごとに 1 回（sessionStorage）。表示済みの判定は index.html の <head> で行い、ちらつきを防ぐ
@@ -68,6 +71,7 @@ assets/               画像などの素材（中身は git 管理外）
 - 額は作品に保存された `frame`（登録時にランダムに決定）を使う。無い作品（手で書いたデータ）は向きに合う 5 種類から `id` のハッシュで選ぶ。額画像を 9 分割して canvas で絵のサイズに合成し、`.frame` の背景にしている（CSS の border-image は 3D 空間で継ぎ目に線が出るので使わない）。
 - 額画像は、参考画像から切り抜いた額を `generate-illustration` スキルで「絵を外した正面向きの額（窓と背景は #00FF00）」として描き直し、緑を透過して作った。額を追加・差し替えるときも同じ手順で作り、`frames.json` の slice（透過した窓までの距離）を測り直すこと。
 - 表示は 3 つ：`walk`（廊下）→ `focus`（正面）→ `zoom`（拡大）。拡大のカメラ距離は `zoomCamera` で、マットと `object-fit: contain` を考慮した絵そのものの大きさが画面（余白 12px・下のタイトル帯 56px を除く）に収まるように決める。
+- 画面の参照はすべて相対パス（GitHub Pages ではサイトが /my-illust-museum/ の下に置かれるため）。`admin.js` の API だけは手元専用なので絶対パスのまま。
 - 見た目を変えたら、ブラウザで正面表示・廊下・その途中のアニメーションを実際に確認すること。
 
 ## 資料の保存場所

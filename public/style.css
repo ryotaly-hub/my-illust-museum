@@ -7,7 +7,7 @@
   /* 壁紙（public/wallpaper.webp は模様の 1 周期 486×529 を切り出したもの）。
      縦横比はそのままで、壁の板 1 枚（SPACING = 520）にちょうど 4 枚並ぶ幅にして、板の継ぎ目で模様がずれないようにする。
      この大きさで、百合の紋章が額の高さの 1/8 くらいになる */
-  --wallpaper: url("/wallpaper.webp") 0 0 / 130px 141.5px repeat;
+  --wallpaper: url("wallpaper.webp") 0 0 / 130px 141.5px repeat;
   /* 照明の当たらない部分を暗くする（上の方ほど暗い） */
   --wall-shade: linear-gradient(to bottom, rgba(8, 6, 5, 0.72) 0%, rgba(8, 6, 5, 0.45) 30%, rgba(8, 6, 5, 0.5) 88%);
   --ink: #f4efe6;
@@ -399,6 +399,10 @@ body.mode-focus .art { cursor: zoom-in; }
 .empty[hidden] { display: none; }
 
 /* ---------- 作品の登録（自分専用） ---------- */
+
+/* GitHub Pages の公開版では登録画面を使わない（サーバーがないため） */
+.static-site .gear,
+.static-site .admin { display: none !important; }
 
 .gear {
   position: fixed;

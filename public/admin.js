@@ -3,6 +3,9 @@
 // 登録した作品は新しい順の一覧に並び、ドラッグで並べ替えられる。閉じると美術館に反映する。
 
 (() => {
+  // 公開版（GitHub Pages）にはサーバーがないので、登録画面は使わない
+  if (window.MUSEUM_STATIC) return;
+
   const MAX_SIDE = 2400; // これより大きい画像は登録前に縮める（表示には十分で、読み込みが軽くなる）
   const TOKEN_KEY = 'museum-admin-token';
 

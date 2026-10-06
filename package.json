@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node --env-file-if-exists=.env index.js",
-    "test": "bash test.sh"
+    "test": "bash test.sh",
+    "pages": "node scripts/publish-pages.js"
   },
   "keywords": [],
   "author": "",

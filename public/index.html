@@ -4,9 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Michan's Museum</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="site-config.js"></script>
   <script>
     // オープニングはタブを開いている間に 1 回だけ。見たことがあれば、描画の前に隠しておく（一瞬見えるのを防ぐ）
+    if (window.MUSEUM_STATIC) document.documentElement.classList.add('static-site');
     try {
       if (sessionStorage.getItem('museum-opening-seen')) document.documentElement.classList.add('opening-seen');
     } catch (e) {
@@ -57,7 +59,7 @@
 
   <!-- 作品の登録（自分専用）。右下の歯車から、パスワードを入れて入る -->
   <button class="gear" id="btn-admin" type="button" aria-label="設定（作品の登録）">
-    <img src="/icons/gear.webp" alt="">
+    <img src="icons/gear.webp" alt="">
   </button>
 
   <div class="admin" id="admin" hidden>
@@ -155,8 +157,8 @@
     <p class="opening-skip" id="opening-skip">クリックでスキップ</p>
   </div>
 
-  <script src="/opening.js"></script>
-  <script src="/app.js"></script>
-  <script src="/admin.js"></script>
+  <script src="opening.js"></script>
+  <script src="app.js"></script>
+  <script src="admin.js"></script>
 </body>
 </html>

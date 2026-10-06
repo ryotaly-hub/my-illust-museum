@@ -29,7 +29,7 @@
   async function start() {
     let works = [];
     try {
-      works = (await (await fetch('/api/works')).json()).works || [];
+      works = (await (await fetch(window.MUSEUM_STATIC ? 'data/works.json' : 'api/works')).json()).works || [];
     } catch (err) {
       console.error(err);
     }

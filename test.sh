@@ -49,6 +49,7 @@ assert_eq "GET / title" "1" "$(echo "$body" | grep -c "<title>Michan's Museum</t
 
 # --- 画面のスクリプトとスタイル ---
 assert_eq "GET /app.js status" "200" "$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/app.js")"
+assert_eq "GET /site-config.js status" "200" "$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/site-config.js")"
 assert_eq "GET /opening.js status" "200" "$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/opening.js")"
 assert_eq "GET /admin.js status" "200" "$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/admin.js")"
 assert_eq "GET /style.css status" "200" "$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/style.css")"
@@ -150,6 +151,15 @@ res=$(post POST /api/password "$TOKEN" '{"current":"0000","next":"abcd"}')
 assert_eq "POST /api/password status" "200" "$(code "$res")"
 assert_eq "login with old password" "401" "$(code "$(post POST /api/login "" '{"password":"0000"}')")"
 assert_eq "login with new password" "200" "$(code "$(post POST /api/login "" '{"password":"abcd"}')")"
+
+# --- GitHub Pages 用の組み立て（push はしない） ---
+PAGES_DIR="$TMP_DIR/pages"
+MUSEUM_DATA_DIR="$TMP_DIR/data" MUSEUM_UPLOAD_DIR="$TMP_DIR/uploads" node scripts/publish-pages.js --build-only "$PAGES_DIR" > /dev/null
+assert_eq "pages: index.html" "1" "$(grep -c "<title>Michan's Museum</title>" "$PAGES_DIR/index.html")"
+assert_eq "pages: static mode" "1" "$(grep -c 'MUSEUM_STATIC = true' "$PAGES_DIR/site-config.js")"
+assert_eq "pages: works count" "$(curl -s "$BASE_URL/api/works" | jq '.works | length')" "$(jq '.works | length' "$PAGES_DIR/data/works.json")"
+assert_eq "pages: relative image paths" "0" "$(jq '[.works[].image | select(startswith("/"))] | length' "$PAGES_DIR/data/works.json")"
+assert_eq "pages: no admin.js" "no" "$([ -e "$PAGES_DIR/admin.js" ] && echo yes || echo no)"
 
 # --- 存在しないルート ---
 res=$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/not-found")
